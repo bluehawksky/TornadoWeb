@@ -204,6 +204,11 @@ class RequestBaseHandler(RequestHandler, Utils):
         return self.request.body
     
     @property
+    def files(self):
+        
+        return self.request.files
+    
+    @property
     def client_ip(self):
         
         return self.request.remote_ip

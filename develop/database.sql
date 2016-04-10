@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `account` (
   `password` varchar(50) NOT NULL DEFAULT '' COMMENT '密码',
   `rbac_role` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '权限角色',
   PRIMARY KEY (`id`),
-  KEY `username` (`username`),
+  UNIQUE KEY `username` (`username`),
   KEY `rbac_role` (`rbac_role`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='账户表' AUTO_INCREMENT=1;
 

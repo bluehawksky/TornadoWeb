@@ -2,25 +2,14 @@
 
 import config
 
-from tornado.gen import coroutine, Return
+from tornado.gen import coroutine
 
 from util.util import Utils
-from util.struct import Ignore
 from util.cache import MCache
 from util.database import MySQLPool
 
 
 class BaseModel(Utils):
-    
-    @staticmethod
-    def Return(value=None):
-        
-        raise Return(value)
-    
-    @staticmethod
-    def Break():
-        
-        raise Ignore()
     
     def __init__(self):
         

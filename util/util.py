@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import uuid, time, hashlib, base64, string, binascii, socket
+import re, uuid, time, hashlib, base64, string, binascii, socket
 import jwt
 
 from random import randint
@@ -8,9 +8,10 @@ from random import randint
 from datetime import datetime
 
 from tornado.log import app_log
-from tornado.gen import sleep
+from tornado.gen import sleep, Return
 from tornado.escape import utf8, to_basestring, json_decode, json_encode
 
+from util.struct import Ignore
 from util.database import safestr
 
 
@@ -29,6 +30,16 @@ class Utils():
     json_decode = staticmethod(json_decode)
     
     @staticmethod
+    def Return(value=None):
+        
+        raise Return(value)
+    
+    @staticmethod
+    def Break():
+        
+        raise Ignore()
+    
+    @staticmethod
     def today():
         
         return datetime.today()
@@ -42,6 +53,13 @@ class Utils():
     def split_int(val, sep=r',', maxsplit=-1):
         
         return [int(temp) for temp in val.split(sep, maxsplit) if temp.strip().isdigit()]
+    
+    @staticmethod
+    def re_match(pattern, string):
+        
+        result = re.match(pattern, string)
+        
+        return True if result else False
     
     @staticmethod
     def ip2int(val):
