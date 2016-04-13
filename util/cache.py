@@ -50,12 +50,15 @@ class MCache():
     
     def key(self, key, *args):
         
+        if(not args):
+            return r'_'.join([config.Static.Secret, str(key)])
+        
         keys = r'_'.join(str(arg) for arg in args)
         
         if(len(keys) > 32):
             keys = hashlib.md5(utf8(keys)).hexdigest()
         
-        return r'_'.join([str(key), keys])
+        return r'_'.join([config.Static.Secret, str(key), keys])
     
     @coroutine
     def touch(self, key, expire=0):

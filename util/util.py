@@ -55,9 +55,17 @@ class Utils():
         return [int(temp) for temp in val.split(sep, maxsplit) if temp.strip().isdigit()]
     
     @staticmethod
-    def re_match(pattern, string):
+    def sub_str(value, length, suffix=r'...'):
         
-        result = re.match(pattern, string)
+        if(len(value) > length):
+            return r'{0:s}{1:s}'.format(value[0:length], suffix)
+        else:
+            return value
+    
+    @staticmethod
+    def re_match(pattern, value):
+        
+        result = re.match(pattern, value)
         
         return True if result else False
     

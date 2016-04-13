@@ -336,7 +336,12 @@ class RequestBaseHandler(RequestHandler, Utils):
         if(status_code != 200):
             self.set_status(status_code)
         
-        return self.finish(self.json_encode(chunk))
+        try:
+            response = self.json_encode(chunk)
+        except:
+            response = None
+        
+        return self.finish(response)
     
     def write_png(self, chunk):
         """
