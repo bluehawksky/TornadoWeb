@@ -23,16 +23,16 @@ class SystemModel(BaseModel):
             records1 = (yield self._dbm.query(r'show processlist')).fetchall()
             records2 = (yield self._dbs.query(r'show processlist')).fetchall()
             
-            db_live = bool(len(records1) > 0) or bool(len(records2) > 0)
+            db_live = (len(records1) > 0) or (len(records2) > 0)
         
         with catch_error():
             
             ckey = r'system_checkup'
-            cval = str(time.time())
+            cval = self.timestamp()
             
             yield self.set_cache(ckey, cval)
             
-            mc_live = bool(cval == (yield self.get_cache(ckey)))
+            mc_live = (cval == (yield self.get_cache(ckey)))
         
         return db_live and mc_live
 

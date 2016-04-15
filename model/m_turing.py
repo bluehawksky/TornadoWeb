@@ -3,9 +3,6 @@
 import config
 
 from tornado.gen import coroutine
-from tornado.httpclient import AsyncHTTPClient, HTTPRequest
-from tornado.httputil import url_concat
-from tornado.escape import utf8, json_decode
 
 from util.decorator import singleton, catch_error
 
@@ -21,23 +18,16 @@ class TuringClient(BaseModel):
         self._api_key = config.Static.TuringApiKey
     
     @coroutine
-    def __query(self, url, **kwargs):
-        
-        kwargs[r'key'] = self._api_key
-        
-        url = url_concat(r''.join([self._api_url, url]), kwargs)
-        
-        self.debug(url)
+    def __query(self, url, **params):
         
         result = None
         
         with catch_error():
             
-            client = AsyncHTTPClient()
+            response = yield self.fetch_url(r''.join([self._api_url, url]), params)
             
-            response = yield client.fetch(HTTPRequest(url))
-            
-            result = json_decode(utf8(response.body))
+            if(response):
+                result = self.json_decode(response)
             
         self.Return(result)
     

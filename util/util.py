@@ -11,8 +11,9 @@ from tornado.log import app_log
 from tornado.gen import sleep, Return
 from tornado.escape import utf8, to_basestring, json_decode, json_encode
 
-from util.struct import Ignore
-from util.database import safestr
+from .struct import Ignore
+from .cache import MLock
+from .database import safestr
 
 
 class Utils():
@@ -38,6 +39,11 @@ class Utils():
     def Break():
         
         raise Ignore()
+    
+    @staticmethod
+    def allocate_lock(*args):
+        
+        return MLock(*args)
     
     @staticmethod
     def today():

@@ -22,6 +22,9 @@ class RequestBaseHandler(RequestHandler, Utils):
     # 消息检查器列表
     _checkers = []
     
+    # 消息整理器列表
+    _finishers = []
+    
     @classmethod
     def get_module_name(cls):
         
@@ -61,6 +64,14 @@ class RequestBaseHandler(RequestHandler, Utils):
                 if(not result):
                     self._finished or self.finish()
                     break
+    
+    def on_finish(self):
+        
+        if(self._finishers):
+            
+            for finisher in self._finishers:
+                
+                finisher(self)
     
     def redirect(self, url, permanent=False):
         

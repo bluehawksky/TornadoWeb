@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import hashlib, pickle, binascii, zlib, config
+import time, hashlib, pickle, binascii, zlib, config
 
-from tornado.gen import coroutine, Return, Task
+from tornado.gen import coroutine, sleep, Return, Task
 from tornado_redis import Client, ConnectionPool
 from tornado.escape import utf8
 
@@ -109,6 +109,32 @@ class MCache():
             raise Return(result)
     
     @coroutine
+    def setnx(self, key, val, expire=0):
+        
+        with catch_error():
+            
+            client = self._get_client()
+            
+            val = self._to_store_value(val)
+            
+            result = yield Task(client.set, key, val, expire, only_if_not_exists=True)
+            
+            raise Return(result)
+    
+    @coroutine
+    def setxx(self, key, val, expire=0):
+        
+        with catch_error():
+            
+            client = self._get_client()
+            
+            val = self._to_store_value(val)
+            
+            result = yield Task(client.set, key, val, expire, only_if_exists=True)
+            
+            raise Return(result)
+    
+    @coroutine
     def incr(self, key, amount=1):
         
         with catch_error():
@@ -151,4 +177,45 @@ class MCache():
             result = yield Task(client.keys, pattern)
             
             raise Return(result)
+
+
+class MLock():
+    
+    def __init__(self, *args):
+        
+        self._cache = MCache()
+        
+        self._lock_tag = self._cache.key(r'threading_lock', args)
+        
+        self._valid = False
+    
+    @coroutine
+    def acquire(self, expire=60, duration=0.01):
+        
+        now_time = time.time()
+        
+        self._valid = yield self._cache.setnx(self._lock_tag, now_time, expire)
+        
+        while(not self._valid):
+            
+            sleep(duration)
+            
+            self._valid = yield self._cache.setnx(self._lock_tag, now_time, expire)
+    
+    @coroutine
+    def release(self):
+        
+        if(self._cache and self._valid):
+        
+            self._valid = False
+            
+            yield self._cache.delete(self._lock_tag)
+            
+        self._cache = None
+        
+        self._lock_tag = None
+    
+    def __del__(self):
+        
+        self.release()
 

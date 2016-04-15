@@ -3,10 +3,14 @@
 import config
 
 from tornado.gen import coroutine
+from tornado.escape import utf8
+from tornado.httpclient import AsyncHTTPClient, HTTPRequest
+from tornado.httputil import url_concat
 
 from util.util import Utils
 from util.cache import MCache
 from util.database import MySQLPool
+from util.decorator import catch_error
 
 
 class BaseModel(Utils):
@@ -28,6 +32,24 @@ class BaseModel(Utils):
         # 数据连接池
         self._dbm = None
         self._dbs = None
+    
+    @coroutine
+    def fetch_url(self, url, params=None, method=r'GET', headers=None, body=None):
+        
+        if(params):
+            url = url_concat(url, params)
+        
+        result = None
+        
+        with catch_error():
+            
+            client = AsyncHTTPClient()
+            
+            response = yield client.fetch(HTTPRequest(url, method, headers, body))
+            
+            result = utf8(response.body)
+        
+        self.Return(result)
     
     def cache_key(self, *keys):
         

@@ -3,9 +3,6 @@
 import config
 
 from tornado.gen import coroutine
-from tornado.httpclient import AsyncHTTPClient, HTTPRequest
-from tornado.httputil import url_concat
-from tornado.escape import utf8, json_decode
 
 from util.decorator import singleton, catch_error
 
@@ -21,24 +18,19 @@ class BaiduMapClient(BaseModel):
         self._api_key = config.Static.BaiduMapAK
     
     @coroutine
-    def __query(self, url, **kwargs):
+    def __query(self, url, **params):
         
-        kwargs[r'ak'] = self._api_key
-        kwargs[r'output'] = r'json'
-        
-        url = url_concat(r''.join([self._api_url, url]), kwargs)
-        
-        self.debug(url)
+        params[r'ak'] = self._api_key
+        params[r'output'] = r'json'
         
         result = None
         
         with catch_error():
             
-            client = AsyncHTTPClient()
+            response = yield self.fetch_url(r''.join([self._api_url, url]), params)
             
-            response = yield client.fetch(HTTPRequest(url))
-            
-            result = json_decode(utf8(response.body))
+            if(response):
+                result = self.json_decode(response)
             
         self.Return(result)
     
