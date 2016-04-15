@@ -205,11 +205,12 @@ class MLock():
     @coroutine
     def release(self):
         
-        if(self._cache and self._valid):
+        if(self._valid):
         
             self._valid = False
             
-            yield self._cache.delete(self._lock_tag)
+            if(self._cache):
+                yield self._cache.delete(self._lock_tag)
             
         self._cache = None
         

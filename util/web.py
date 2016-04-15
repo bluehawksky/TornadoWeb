@@ -29,13 +29,13 @@ class RequestBaseHandler(RequestHandler, Utils):
     def get_module_name(cls):
         
         if(hasattr(cls, r'_module_name')):
-            return cls._request_module
+            return cls._module_name
         
-        request_module = r'.'.join([cls.__module__, cls.__name__])
+        module_name = r'.'.join([cls.__module__, cls.__name__])
         
-        setattr(cls, r'_module_name', request_module)
+        setattr(cls, r'_module_name', module_name)
         
-        return request_module
+        return module_name
     
     def initialize(self):
         
