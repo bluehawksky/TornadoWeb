@@ -19,6 +19,8 @@ class default(RequestSessHandler):
     
     _checkers = [m_checker.auto_login]
     
+    _finishers = [m_checker.logger]
+    
     @coroutine
     def get(self):
         

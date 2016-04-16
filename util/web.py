@@ -243,7 +243,7 @@ class RequestBaseHandler(RequestHandler, Utils):
         """
         return self.request.headers.get(name, default)
     
-    def get_arg_str(self, name, default=r''):
+    def get_arg_str(self, name, default=r'', length=0):
         """
         获取str型输入
         """
@@ -252,7 +252,7 @@ class RequestBaseHandler(RequestHandler, Utils):
         if(result is None):
             return default
         else:
-            return self.safestr(result)
+            return self.safestr(result[0:length] if length > 0 else result)
     
     def get_arg_bool(self, name, default=False):
         """

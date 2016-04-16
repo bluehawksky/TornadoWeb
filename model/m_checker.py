@@ -11,3 +11,8 @@ def auto_login(request):
     
     raise Return(True)
 
+
+def logger(request):
+    
+    app_log.info(r'I am request finisher')
+
