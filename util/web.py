@@ -251,8 +251,10 @@ class RequestBaseHandler(RequestHandler, Utils):
         
         if(result is None):
             return default
+        elif(result and length and len(result) > length):
+            return self.safestr(result[0:length])
         else:
-            return self.safestr(result[0:length] if length > 0 else result)
+            return self.safestr(result)
     
     def get_arg_bool(self, name, default=False):
         """

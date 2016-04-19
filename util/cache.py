@@ -216,6 +216,14 @@ class MLock():
         
         self._lock_tag = None
     
+    def __enter__(self):
+        
+        return self
+    
+    def __exit__(self, *args):
+        
+        self.release()
+    
     def __del__(self):
         
         self.release()
