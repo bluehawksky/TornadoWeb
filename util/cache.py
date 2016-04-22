@@ -96,13 +96,31 @@ class MCache():
             raise Return(result)
     
     @coroutine
-    def set(self, key, val, expire=0):
+    def mget(self, *keys):
+        
+        if(not keys):
+            raise Return(False)
         
         with catch_error():
             
             client = self._get_client()
             
+            result = yield Task(client.mget, keys)
+            
+            if(result):
+                for key, val in enumerate(result):
+                    result[key] = self._from_store_value(val)
+            
+            raise Return(result)
+    
+    @coroutine
+    def set(self, key, val, expire=0):
+        
+        with catch_error():
+            
             val = self._to_store_value(val)
+            
+            client = self._get_client()
             
             result = yield Task(client.set, key, val, expire)
             
@@ -113,9 +131,9 @@ class MCache():
         
         with catch_error():
             
-            client = self._get_client()
-            
             val = self._to_store_value(val)
+            
+            client = self._get_client()
             
             result = yield Task(client.set, key, val, expire, only_if_not_exists=True)
             
@@ -126,33 +144,45 @@ class MCache():
         
         with catch_error():
             
-            client = self._get_client()
-            
             val = self._to_store_value(val)
+            
+            client = self._get_client()
             
             result = yield Task(client.set, key, val, expire, only_if_exists=True)
             
             raise Return(result)
     
     @coroutine
-    def incr(self, key, amount=1):
+    def mset(self, **mapping):
+        
+        if(not mapping):
+            raise Return(False)
         
         with catch_error():
             
+            for key, val in mapping.items():
+                mapping[key] = self._to_store_value(val)
+            
             client = self._get_client()
             
-            result = yield Task(client.incrby, key, amount)
+            result = yield Task(client.mset, mapping)
             
             raise Return(result)
     
     @coroutine
-    def decr(self, key, amount=1):
+    def msetnx(self, **mapping):
+        
+        if(not mapping):
+            raise Return(False)
         
         with catch_error():
             
+            for key, val in mapping.items():
+                mapping[key] = self._to_store_value(val)
+            
             client = self._get_client()
             
-            result = yield Task(client.decrby, key, amount)
+            result = yield Task(client.msetnx, mapping)
             
             raise Return(result)
     

@@ -63,12 +63,24 @@ class BaseModel(Utils):
         self.Return(result)
     
     @coroutine
+    def get_multi_cache(self, *keys):
+        
+        result = yield self._mc.mget(*keys)
+        
+        self.Return(result)
+    
+    @coroutine
     def set_cache(self, key, val, time=0):
         
         if(time == 0):
             time = config.Static.RedisExpires
         
         result = yield self._mc.set(key, val, time)
+    
+    @coroutine
+    def set_multi_cache(self, **mapping):
+        
+        result = yield self._mc.mset(**mapping)
         
         self.Return(result)
     

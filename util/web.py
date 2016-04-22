@@ -265,36 +265,60 @@ class RequestBaseHandler(RequestHandler, Utils):
         if(result is None):
             return default
         else:
-            return result.lower() not in [r'false', r'0', r'']
+            return result.lower() not in (r'false', r'0', r'')
     
-    def get_arg_int(self, name, default=0):
+    def get_arg_int(self, name, default=0, min_val=None, max_val=None):
         """
         获取int型输入
         """
         result = self.get_argument(name, None, True)
         
         if(result is None):
+            
             result = default
+            
         else:
+            
             try:
+                
                 result = int(result)
+                
+                if(min_val is not None):
+                    result = max(result, min_val)
+                
+                if(max_val is not None):
+                    result = min(result, max_val)
+                
             except:
+                
                 result = default
         
         return result
     
-    def get_arg_float(self, name, default=0.0):
+    def get_arg_float(self, name, default=0.0, min_val=None, max_val=None):
         """
         获取float型输入
         """
         result = self.get_argument(name, None, True)
         
         if(result is None):
+            
             result = default
+            
         else:
+            
             try:
+                
                 result = float(result)
+                
+                if(min_val is not None):
+                    result = max(result, min_val)
+                
+                if(max_val is not None):
+                    result = min(result, max_val)
+                
             except:
+                
                 result = default
         
         return result
