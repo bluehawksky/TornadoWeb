@@ -35,6 +35,8 @@ Static.MySqlMaxIdleConn = 32
 Static.MySqlMaxOpenConn = 128
 
 Static.RedisHost = (r'127.0.0.1', 6379)
+Static.RedisBase = 0
+Static.RedisPasswd = None
 Static.RedisMaxConn = 128
 Static.RedisExpires = 3600
 

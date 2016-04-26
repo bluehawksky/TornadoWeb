@@ -20,7 +20,7 @@ class MCache():
         
     def _get_client(self):
         
-        return Client(connection_pool=self.__conn_pool)
+        return Client(password=config.Static.RedisPasswd, selected_db=config.Static.RedisBase, connection_pool=self.__conn_pool)
         
     def _to_store_value(self, val):
         
@@ -51,14 +51,14 @@ class MCache():
     def key(self, key, *args):
         
         if(not args):
-            return r'_'.join([config.Static.Secret, str(key)])
+            return str(key)
         
         keys = r'_'.join(str(arg) for arg in args)
         
         if(len(keys) > 32):
             keys = hashlib.md5(utf8(keys)).hexdigest()
         
-        return r'_'.join([config.Static.Secret, str(key), keys])
+        return r'_'.join([str(key), keys])
     
     @coroutine
     def touch(self, key, expire=0):
